@@ -2,6 +2,7 @@
 
 package com.example.survey_app.ui.screen
 
+import android.content.Context
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -10,12 +11,14 @@ import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -23,6 +26,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.example.survey_app.data.model.SurveyViewModel
 import com.example.survey_app.ui.theme.SurveyAppTheme
 import androidx.lifecycle.viewmodel.compose.viewModel
+import java.util.Calendar
 
 @Composable
 fun SurveyScreen(viewModel: SurveyViewModel = viewModel()) {
@@ -59,7 +63,7 @@ fun FilledCardExample() {
             containerColor = MaterialTheme.colorScheme.secondary,
         ),
         modifier = Modifier
-            .size(width = 350.dp, height = 180.dp)
+            .size(width = 350.dp, height = 160.dp)
     ) {
         Text(
             text = "CS 458 \n SOFTWARE VERIFICATION AND VALIDATION \n INTRODUCTION TO MOBILE TEST AUTOMATION",
@@ -82,16 +86,58 @@ fun NameInput(name: String, onNameChange: (String) -> Unit) {
     Spacer(modifier = Modifier.height(16.dp))
 }
 
+
 @Composable
 fun BirthdateInput(birthdate: String, onBirthdateChange: (String) -> Unit) {
+    val context = LocalContext.current
+    val showDialog = remember { mutableStateOf(false) }
+
+    if (showDialog.value) {
+        DisposableEffect(Unit) {
+            val calendar = Calendar.getInstance()
+            val year = calendar.get(Calendar.YEAR)
+            val month = calendar.get(Calendar.MONTH)
+            val day = calendar.get(Calendar.DAY_OF_MONTH)
+
+            val datePickerDialog = android.app.DatePickerDialog(
+                context,
+                { _, selectedYear, selectedMonth, selectedDayOfMonth ->
+                    onBirthdateChange("$selectedDayOfMonth/${selectedMonth + 1}/$selectedYear")
+                    showDialog.value = false
+                }, year, month, day
+            )
+
+            datePickerDialog.setOnDismissListener {
+                showDialog.value = false
+            }
+
+            datePickerDialog.show()
+
+            onDispose {
+                datePickerDialog.dismiss()
+            }
+        }
+    }
+
     OutlinedTextField(
         value = birthdate,
-        onValueChange = onBirthdateChange,
+        onValueChange = { /* ReadOnly, no direct input allowed */ },
         label = { Text("Birth Date (DD/MM/YYYY)") },
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { showDialog.value = true },
+        readOnly = true,
+        trailingIcon = {
+            Icon(
+                imageVector = Icons.Default.DateRange,
+                contentDescription = "Select Date",
+                modifier = Modifier.clickable { showDialog.value = true }
+            )
+        }
     )
     Spacer(modifier = Modifier.height(16.dp))
 }
+
 
 @Composable
 fun AITechnologySelection(
@@ -134,7 +180,7 @@ fun AITechnologySelection(
                 OutlinedTextField(
                     value = selectedTechnologiesCons[option] ?: "",
                     onValueChange = { cons -> onUpdateCons(option, cons) },
-                    label = { Text("Cons for $option") },
+                    label = { Text("Cons/Defects for $option") },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(8.dp)
