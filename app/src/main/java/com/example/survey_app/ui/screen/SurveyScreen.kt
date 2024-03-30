@@ -17,6 +17,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.survey_app.data.model.SurveyViewModel
@@ -34,6 +35,7 @@ fun SurveyScreen(viewModel: SurveyViewModel = viewModel()) {
                 verticalArrangement = Arrangement.Top, // Changed to Top for natural scroll behavior
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                FilledCardExample()
                 NameInput(name = viewModel.name, onNameChange = viewModel::onNameChange)
                 BirthdateInput(birthdate = viewModel.birthDate, onBirthdateChange = viewModel::onBirthDateChange)
                 EducationLevelInput(educationLevel = viewModel.educationLevel, onEducationLevelChange = viewModel::onEducationLevelChange)
@@ -48,6 +50,25 @@ fun SurveyScreen(viewModel: SurveyViewModel = viewModel()) {
             }
         }
     }
+}
+
+@Composable
+fun FilledCardExample() {
+    Card(
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.secondary,
+        ),
+        modifier = Modifier
+            .size(width = 350.dp, height = 180.dp)
+    ) {
+        Text(
+            text = "CS 458 \n SOFTWARE VERIFICATION AND VALIDATION \n INTRODUCTION TO MOBILE TEST AUTOMATION",
+            modifier = Modifier
+                .padding(20.dp),
+            textAlign = TextAlign.Center,
+        )
+    }
+    Spacer(modifier = Modifier.height(16.dp))
 }
 
 @Composable

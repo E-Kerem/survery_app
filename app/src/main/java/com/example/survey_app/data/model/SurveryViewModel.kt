@@ -27,8 +27,6 @@ class SurveyViewModel : ViewModel() {
         selectedTechnologiesCons = updatedMap.toMap()
     }
 
-
-    // Function names match those used in the Composables
     fun onNameChange(newName: String) { name = newName }
     fun onBirthDateChange(newDate: String) { birthDate = newDate }
     fun onEducationLevelChange(newLevel: String) { educationLevel = newLevel }
