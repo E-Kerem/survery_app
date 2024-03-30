@@ -5,7 +5,9 @@ package com.example.survey_app.ui.screen
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.toggleable
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.KeyboardArrowDown
@@ -24,12 +26,12 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 @Composable
 fun SurveyScreen(viewModel: SurveyViewModel = viewModel()) {
     SurveyAppTheme {
-        Surface {
+        Surface(modifier = Modifier.fillMaxSize()) {
             Column(
                 modifier = Modifier
-                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
                     .padding(16.dp),
-                verticalArrangement = Arrangement.Center,
+                verticalArrangement = Arrangement.Top, // Changed to Top for natural scroll behavior
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 NameInput(name = viewModel.name, onNameChange = viewModel::onNameChange)
@@ -122,8 +124,6 @@ fun AITechnologySelection(
     }
 }
 
-
-
 @Composable
 fun ConsInput(cons: String, onConsChange: (String) -> Unit) {
     OutlinedTextField(
@@ -134,7 +134,6 @@ fun ConsInput(cons: String, onConsChange: (String) -> Unit) {
     )
     Spacer(modifier = Modifier.height(16.dp))
 }
-
 
 @Composable
 fun EducationLevelInput(educationLevel: String, onEducationLevelChange: (String) -> Unit) {
