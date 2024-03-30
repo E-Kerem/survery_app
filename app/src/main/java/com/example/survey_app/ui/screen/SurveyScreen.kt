@@ -36,7 +36,7 @@ fun SurveyScreen(viewModel: SurveyViewModel = viewModel()) {
                 modifier = Modifier
                     .verticalScroll(rememberScrollState())
                     .padding(16.dp),
-                verticalArrangement = Arrangement.Top, // Changed to Top for natural scroll behavior
+                verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 FilledCardExample()
@@ -45,11 +45,11 @@ fun SurveyScreen(viewModel: SurveyViewModel = viewModel()) {
                 EducationLevelInput(educationLevel = viewModel.educationLevel, onEducationLevelChange = viewModel::onEducationLevelChange)
                 CityInput(city = viewModel.city, onCityChange = viewModel::onCityChange)
                 GenderInput(selectedGender = viewModel.gender, onGenderSelected = viewModel::onGenderSelected)
+                ConsInput(cons = viewModel.cons, onConsChange = viewModel::onConsChange)
                 AITechnologySelection(
                     selectedTechnologiesCons = viewModel.selectedTechnologiesCons,
                     onUpdateCons = viewModel::updateConsForTechnology
                 )
-                ConsInput(cons = viewModel.cons, onConsChange = viewModel::onConsChange)
                 SubmitButton(onSubmit = viewModel::submitSurvey)
             }
         }
@@ -60,7 +60,7 @@ fun SurveyScreen(viewModel: SurveyViewModel = viewModel()) {
 fun FilledCardExample() {
     Card(
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.secondary,
+            containerColor = MaterialTheme.colorScheme.primaryContainer,
         ),
         modifier = Modifier
             .size(width = 350.dp, height = 160.dp)
@@ -150,7 +150,6 @@ fun AITechnologySelection(
     Column {
         options.forEach { option ->
             val isSelected = selectedOptions[option] ?: false
-
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -261,6 +260,7 @@ fun GenderInput(selectedGender: String, onGenderSelected: (String) -> Unit) {
             }
         }
     }
+    Spacer(modifier = Modifier.height(16.dp))
 }
 
 @Composable
