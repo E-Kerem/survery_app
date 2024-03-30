@@ -2,28 +2,21 @@
 
 package com.example.survey_app.ui.screen
 
-import android.content.Context
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.KeyboardArrowUp
-import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.tooling.preview.Preview
@@ -31,8 +24,12 @@ import com.example.survey_app.data.model.SurveyViewModel
 import com.example.survey_app.ui.theme.SurveyAppTheme
 import androidx.lifecycle.viewmodel.compose.viewModel
 import java.util.Calendar
+
 @Composable
 fun SurveyScreen(viewModel: SurveyViewModel = viewModel()) {
+    var showSubmissionDialog by remember { mutableStateOf(false) }
+    var dialogMessage by remember { mutableStateOf("") }
+
     SurveyAppTheme {
         Surface(modifier = Modifier.fillMaxSize()) {
             Column(
@@ -54,7 +51,29 @@ fun SurveyScreen(viewModel: SurveyViewModel = viewModel()) {
                     selectedTechnologiesCons = viewModel.selectedTechnologiesCons,
                     onUpdateCons = viewModel::updateConsForTechnology
                 )
-                SubmitButton(onSubmit = viewModel::submitSurvey)
+                SubmitButton(onSubmit = {
+                    if (viewModel.isFormValid()) {
+                        viewModel.submitSurvey()
+                        dialogMessage = "Successfully submitted!"
+                        viewModel.resetFields()
+                    } else {
+                        dialogMessage = "Please fill all the fields."
+                    }
+                    showSubmissionDialog = true
+                })
+
+                if (showSubmissionDialog) {
+                    AlertDialog(
+                        onDismissRequest = { showSubmissionDialog = false },
+                        title = { Text("Submission Status") },
+                        text = { Text(dialogMessage) },
+                        confirmButton = {
+                            Button(onClick = { showSubmissionDialog = false }) {
+                                Text("OK")
+                            }
+                        }
+                    )
+                }
             }
         }
     }

@@ -38,9 +38,9 @@ class SurveyViewModel : ViewModel() {
     fun onConsChange(newCons: String) { cons = newCons }
 
     fun submitSurvey() {
-        Log.d("SurveyViewModel", "here") // This will print in Logcat
+        Log.d("SurveyViewModel", "here")
         val databaseReference = FirebaseDatabase.getInstance().getReference("Surveys")
-        val surveyId = databaseReference.push().key // Generate a unique ID for the survey
+        val surveyId = databaseReference.push().key
 
         val survey = hashMapOf(
             "name" to name,
@@ -65,5 +65,21 @@ class SurveyViewModel : ViewModel() {
                     }
                 }
         }
+    }
+
+    fun isFormValid(): Boolean {
+        return name.isNotEmpty() && birthDate.isNotEmpty() && educationLevel.isNotEmpty() &&
+                city.isNotEmpty() && gender.isNotEmpty() && cons.isNotEmpty()
+    }
+
+    fun resetFields() {
+        name = ""
+        birthDate = ""
+        educationLevel = ""
+        city = ""
+        gender = ""
+        cons = ""
+        selectedAIModels = emptyList()
+        selectedTechnologiesCons = mapOf()
     }
 }
