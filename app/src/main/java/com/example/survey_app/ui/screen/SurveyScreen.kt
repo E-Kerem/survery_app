@@ -72,7 +72,7 @@ fun DividerWithSpacing() {
 fun FilledCardExample() {
     Card(
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer,
+            containerColor = MaterialTheme.colorScheme.primary, // Use the primary color
         ),
         modifier = Modifier
             .size(width = 350.dp, height = 160.dp)
@@ -82,6 +82,7 @@ fun FilledCardExample() {
             modifier = Modifier
                 .padding(20.dp),
             textAlign = TextAlign.Center,
+            color = MaterialTheme.colorScheme.onPrimary // Ensure text is visible on primary color
         )
     }
     Spacer(modifier = Modifier.height(16.dp))
@@ -337,9 +338,15 @@ fun GenderInput(selectedGender: String, onGenderSelected: (String) -> Unit) {
 fun SubmitButton(onSubmit: () -> Unit) {
     Button(
         onClick = onSubmit,
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth(),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = MaterialTheme.colorScheme.primary
+        )
     ) {
-        Text("Submit")
+        Text(
+            "Submit",
+            color = MaterialTheme.colorScheme.onPrimary
+        )
     }
 }
 
