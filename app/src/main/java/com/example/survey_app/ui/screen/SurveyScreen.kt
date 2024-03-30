@@ -76,7 +76,6 @@ fun AITechnologySelection(
     onUpdateCons: (String, String) -> Unit
 ) {
     val options = listOf("ChatGPT", "Gemini", "Claude", "Copilot")
-    // Only track which options are selected, not expanded/collapsed state
     val selectedOptions = remember { mutableStateMapOf<String, Boolean>().apply { options.forEach { put(it, false) } } }
 
     Column {
@@ -94,10 +93,8 @@ fun AITechnologySelection(
                     onCheckedChange = { isChecked ->
                         selectedOptions[option] = isChecked
                         if (!isChecked) {
-                            // If checkbox is unchecked, remove the cons for that technology
                             onUpdateCons(option, "")
                         } else {
-                            // If checkbox is checked and no cons are provided yet, initialize with an empty string
                             if (option !in selectedTechnologiesCons) {
                                 onUpdateCons(option, "")
                             }
@@ -110,7 +107,6 @@ fun AITechnologySelection(
                 )
             }
 
-            // Show cons input field if the technology is selected
             if (isSelected) {
                 OutlinedTextField(
                     value = selectedTechnologiesCons[option] ?: "",
