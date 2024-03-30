@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "794609124827",
+    "project_id": "ai-survey-1868c",
+    "storage_bucket": "ai-survey-1868c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:794609124827:android:22610c8541c51c34d0d3fe",
+        "android_client_info": {
+          "package_name": "com.example.survey_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA1o96ZpkVfo_cHmuhJ4wfF77wSpnXQzQg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
