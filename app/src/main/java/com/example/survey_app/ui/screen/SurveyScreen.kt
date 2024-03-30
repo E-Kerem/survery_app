@@ -196,7 +196,7 @@ fun ConsInput(cons: String, onConsChange: (String) -> Unit) {
     OutlinedTextField(
         value = cons,
         onValueChange = onConsChange,
-        label = { Text("Cons of AI Models") },
+        label = { Text("Benefits of AI Models") },
         modifier = Modifier.fillMaxWidth()
     )
     Spacer(modifier = Modifier.height(16.dp))
