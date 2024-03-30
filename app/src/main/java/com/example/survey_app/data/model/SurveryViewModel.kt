@@ -14,6 +14,19 @@ class SurveyViewModel : ViewModel() {
     var gender by mutableStateOf("")
     var selectedAIModels by mutableStateOf<List<String>>(emptyList()) // Renamed for clarity
     var cons by mutableStateOf("")
+    var selectedTechnologiesCons by mutableStateOf(mapOf<String, String>())
+        private set
+
+    fun updateConsForTechnology(technology: String, cons: String) {
+        val updatedMap = selectedTechnologiesCons.toMutableMap()
+        if (cons.isBlank()) {
+            updatedMap.remove(technology) // Remove the entry if cons is blank
+        } else {
+            updatedMap[technology] = cons
+        }
+        selectedTechnologiesCons = updatedMap.toMap()
+    }
+
 
     // Function names match those used in the Composables
     fun onNameChange(newName: String) { name = newName }

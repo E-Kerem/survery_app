@@ -2,11 +2,13 @@
 
 package com.example.survey_app.ui.screen
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -35,7 +37,10 @@ fun SurveyScreen(viewModel: SurveyViewModel = viewModel()) {
                 EducationLevelInput(educationLevel = viewModel.educationLevel, onEducationLevelChange = viewModel::onEducationLevelChange)
                 CityInput(city = viewModel.city, onCityChange = viewModel::onCityChange)
                 GenderInput(selectedGender = viewModel.gender, onGenderSelected = viewModel::onGenderSelected)
-                AITechnologySelection(selectedTechnologies = viewModel.selectedAIModels, onSelectionChange = viewModel::onAIModelSelectionChange)
+                AITechnologySelection(
+                    selectedTechnologiesCons = viewModel.selectedTechnologiesCons,
+                    onUpdateCons = viewModel::updateConsForTechnology
+                )
                 ConsInput(cons = viewModel.cons, onConsChange = viewModel::onConsChange)
                 SubmitButton(onSubmit = viewModel::submitSurvey)
             }
@@ -66,33 +71,74 @@ fun BirthdateInput(birthdate: String, onBirthdateChange: (String) -> Unit) {
 }
 
 @Composable
-fun AITechnologySelection(selectedTechnologies: List<String>, onSelectionChange: (List<String>) -> Unit) {
+fun AITechnologySelection(
+    selectedTechnologiesCons: Map<String, String>,
+    onUpdateCons: (String, String) -> Unit
+) {
     val options = listOf("ChatGPT", "Gemini", "Claude", "Copilot")
-    val (checkedState, onStateChange) = remember { mutableStateOf(true) }
+    // Only track which options are selected, not expanded/collapsed state
+    val selectedOptions = remember { mutableStateMapOf<String, Boolean>().apply { options.forEach { put(it, false) } } }
 
-    Row(
-        Modifier
-            .fillMaxWidth()
-            .height(56.dp)
-            .toggleable(
-                value = checkedState,
-                onValueChange = { onStateChange(!checkedState) },
-                role = Role.Checkbox
-            )
-            .padding(horizontal = 16.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Checkbox(
-            checked = checkedState,
-            onCheckedChange = null
-        )
-        Text(
-            text = "Option selection",
-            style = MaterialTheme.typography.bodyLarge,
-            modifier = Modifier.padding(start = 16.dp)
-        )
+    Column {
+        options.forEach { option ->
+            val isSelected = selectedOptions[option] ?: false
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Checkbox(
+                    checked = isSelected,
+                    onCheckedChange = { isChecked ->
+                        selectedOptions[option] = isChecked
+                        if (!isChecked) {
+                            // If checkbox is unchecked, remove the cons for that technology
+                            onUpdateCons(option, "")
+                        } else {
+                            // If checkbox is checked and no cons are provided yet, initialize with an empty string
+                            if (option !in selectedTechnologiesCons) {
+                                onUpdateCons(option, "")
+                            }
+                        }
+                    }
+                )
+                Text(
+                    text = option,
+                    modifier = Modifier.weight(1f)
+                )
+            }
+
+            // Show cons input field if the technology is selected
+            if (isSelected) {
+                OutlinedTextField(
+                    value = selectedTechnologiesCons[option] ?: "",
+                    onValueChange = { cons -> onUpdateCons(option, cons) },
+                    label = { Text("Cons for $option") },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp)
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+            }
+        }
     }
 }
+
+
+
+@Composable
+fun ConsInput(cons: String, onConsChange: (String) -> Unit) {
+    OutlinedTextField(
+        value = cons,
+        onValueChange = onConsChange,
+        label = { Text("Cons of AI Models") },
+        modifier = Modifier.fillMaxWidth()
+    )
+    Spacer(modifier = Modifier.height(16.dp))
+}
+
 
 @Composable
 fun EducationLevelInput(educationLevel: String, onEducationLevelChange: (String) -> Unit) {
@@ -154,18 +200,6 @@ fun GenderInput(selectedGender: String, onGenderSelected: (String) -> Unit) {
         }
     }
 }
-
-@Composable
-fun ConsInput(cons: String, onConsChange: (String) -> Unit) {
-    OutlinedTextField(
-        value = cons,
-        onValueChange = onConsChange,
-        label = { Text("Cons of AI Models") },
-        modifier = Modifier.fillMaxWidth()
-    )
-    Spacer(modifier = Modifier.height(16.dp))
-}
-
 
 @Composable
 fun SubmitButton(onSubmit: () -> Unit) {
