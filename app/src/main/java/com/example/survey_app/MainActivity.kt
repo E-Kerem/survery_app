@@ -14,13 +14,9 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            var isSplashShown by remember { mutableStateOf(true) }
 
-            if (isSplashShown) {
-                SplashScreen(onNavigationToSurvey = { isSplashShown = false })
-            } else {
-                SurveyScreen()
-            }
+            SurveyScreen()
+
         }
     }
 }

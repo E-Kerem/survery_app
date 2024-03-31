@@ -6,6 +6,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.google.firebase.database.FirebaseDatabase
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
 class SurveyViewModel : ViewModel() {
     // Properties are correctly named
@@ -18,6 +20,10 @@ class SurveyViewModel : ViewModel() {
     var cons by mutableStateOf("")
     var selectedTechnologiesCons by mutableStateOf(mapOf<String, String>())
         private set
+
+    // Submission status represented by a StateFlow
+    private val _submissionStatus = MutableStateFlow<Pair<Boolean, String>?>(null)
+    val submissionStatus: StateFlow<Pair<Boolean, String>?> = _submissionStatus
 
     fun updateConsForTechnology(technology: String, cons: String) {
         val updatedMap = selectedTechnologiesCons.toMutableMap()
@@ -38,7 +44,6 @@ class SurveyViewModel : ViewModel() {
     fun onConsChange(newCons: String) { cons = newCons }
 
     fun submitSurvey() {
-        Log.d("SurveyViewModel", "here")
         val databaseReference = FirebaseDatabase.getInstance().getReference("Surveys")
         val surveyId = databaseReference.push().key
 
@@ -52,16 +57,16 @@ class SurveyViewModel : ViewModel() {
             "cons" to cons,
             "selectedTechnologiesCons" to selectedTechnologiesCons
         )
+        Log.d("SurveyViewModel", "here")
         Log.d("SurveyViewModel", survey.toString()) // T
 
         if (surveyId != null) {
             databaseReference.child(surveyId).setValue(survey)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        print("clicked");
-                        // Handle success, maybe clear the form or show a success message
+                        _submissionStatus.value = Pair(true, "Successfully submitted!")
                     } else {
-                        // Handle failure, show an error message
+                        _submissionStatus.value = Pair(false, "Submission failed. Please try again.")
                     }
                 }
         }

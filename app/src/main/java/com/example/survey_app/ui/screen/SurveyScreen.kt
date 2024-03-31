@@ -17,6 +17,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.tooling.preview.Preview
@@ -29,6 +30,17 @@ import java.util.Calendar
 fun SurveyScreen(viewModel: SurveyViewModel = viewModel()) {
     var showSubmissionDialog by remember { mutableStateOf(false) }
     var dialogMessage by remember { mutableStateOf("") }
+    val submissionStatus by viewModel.submissionStatus.collectAsState(initial = null)
+
+    LaunchedEffect(submissionStatus) {
+        submissionStatus?.let { (success, message) ->
+            dialogMessage = message
+            showSubmissionDialog = true
+            if (success) {
+                viewModel.resetFields()
+            }
+        }
+    }
 
     SurveyAppTheme {
         Surface(modifier = Modifier.fillMaxSize()) {
@@ -113,7 +125,8 @@ fun NameInput(name: String, onNameChange: (String) -> Unit) {
         value = name,
         onValueChange = onNameChange,
         label = { Text("Name and Surname") },
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth()
+            .testTag("nameInput"),
         trailingIcon = {
             Icon(
                 imageVector = Icons.Default.AccountCircle,
@@ -163,6 +176,7 @@ fun BirthdateInput(birthdate: String, onBirthdateChange: (String) -> Unit) {
         label = { Text("Birth Date (DD/MM/YYYY)") },
         modifier = Modifier
             .fillMaxWidth()
+            .testTag("birthDate")
             .clickable { showDialog.value = true },
         readOnly = true,
         trailingIcon = {
@@ -188,12 +202,14 @@ fun AITechnologySelection(
         style = MaterialTheme.typography.titleMedium,
         modifier = Modifier
             .padding(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 8.dp)
+            .testTag("aiTechnologiesTitle") // Example of adding a testTag
     )
 
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp),
+            .padding(8.dp)
+            .testTag("aiTechnologiesCard"), // Test tag for the entire card
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column(modifier = Modifier.padding(8.dp)) {
@@ -217,7 +233,8 @@ fun AITechnologySelection(
                                     onUpdateCons(option, "")
                                 }
                             }
-                        }
+                        },
+                        modifier = Modifier.testTag("checkboxFor$option") // Dynamically tagged
                     )
                     Text(
                         text = option,
@@ -233,6 +250,7 @@ fun AITechnologySelection(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(vertical = 4.dp)
+                            .testTag("inputForCons$option") // Dynamically tagged
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                 }
@@ -242,13 +260,16 @@ fun AITechnologySelection(
 }
 
 
+
+
 @Composable
 fun ConsInput(cons: String, onConsChange: (String) -> Unit) {
     OutlinedTextField(
         value = cons,
         onValueChange = onConsChange,
-        label = { Text("Benefits of AI Models") },
+        label = { Text("Benefits§ of AI Models") },
         modifier = Modifier.fillMaxWidth()
+            .testTag("consInput"),
     )
     Spacer(modifier = Modifier.height(16.dp))
 }
@@ -280,6 +301,7 @@ fun EducationLevelInput(educationLevel: String, onEducationLevelChange: (String)
             expanded = expanded,
             onDismissRequest = { expanded = false },
             modifier = Modifier.fillMaxWidth()
+                .testTag("educationLevel")
         ) {
             educationLevels.forEach { level ->
                 DropdownMenuItem(
@@ -302,7 +324,8 @@ fun CityInput(city: String, onCityChange: (String) -> Unit) {
         value = city,
         onValueChange = onCityChange,
         label = { Text("City") },
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth()
+            .testTag("city"),
         trailingIcon = {
             Icon(
                 imageVector = Icons.Default.Home,
@@ -338,6 +361,7 @@ fun GenderInput(selectedGender: String, onGenderSelected: (String) -> Unit) {
             expanded = expanded,
             onDismissRequest = { expanded = false },
             modifier = Modifier.fillMaxWidth()
+                .testTag("gender")
         ) {
             genders.forEach { gender ->
                 DropdownMenuItem(
@@ -357,7 +381,8 @@ fun GenderInput(selectedGender: String, onGenderSelected: (String) -> Unit) {
 fun SubmitButton(onSubmit: () -> Unit) {
     Button(
         onClick = onSubmit,
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth()
+            .testTag("submitButton"),
         colors = ButtonDefaults.buttonColors(
             containerColor = MaterialTheme.colorScheme.primary
         )
