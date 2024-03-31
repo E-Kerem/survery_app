@@ -17,6 +17,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.tooling.preview.Preview
@@ -113,7 +115,9 @@ fun NameInput(name: String, onNameChange: (String) -> Unit) {
         value = name,
         onValueChange = onNameChange,
         label = { Text("Name and Surname") },
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .semantics { contentDescription = "Name Input" },
         trailingIcon = {
             Icon(
                 imageVector = Icons.Default.AccountCircle,
@@ -163,7 +167,8 @@ fun BirthdateInput(birthdate: String, onBirthdateChange: (String) -> Unit) {
         label = { Text("Birth Date (DD/MM/YYYY)") },
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { showDialog.value = true },
+            .clickable { showDialog.value = true }
+            .semantics { contentDescription = "Birthdate Input" },
         readOnly = true,
         trailingIcon = {
             Icon(
@@ -248,7 +253,9 @@ fun ConsInput(cons: String, onConsChange: (String) -> Unit) {
         value = cons,
         onValueChange = onConsChange,
         label = { Text("Benefits of AI Models") },
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
+            .semantics { contentDescription = "Cons Input" },
     )
     Spacer(modifier = Modifier.height(16.dp))
 }
@@ -259,7 +266,9 @@ fun EducationLevelInput(educationLevel: String, onEducationLevelChange: (String)
     val educationLevels = listOf("High School", "Bachelor's", "Master's", "PhD")
     val context = LocalContext.current
 
-    Box {
+    Box (
+        modifier = Modifier.semantics { contentDescription = "Education Level Input" }
+    ) {
         OutlinedTextField(
             value = educationLevel,
             onValueChange = {},
@@ -302,7 +311,9 @@ fun CityInput(city: String, onCityChange: (String) -> Unit) {
         value = city,
         onValueChange = onCityChange,
         label = { Text("City") },
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .semantics { contentDescription = "City Input" },
         trailingIcon = {
             Icon(
                 imageVector = Icons.Default.Home,
@@ -319,7 +330,9 @@ fun GenderInput(selectedGender: String, onGenderSelected: (String) -> Unit) {
     val genders = listOf("Male", "Female", "Other")
     val label = "Gender"
 
-    Box {
+    Box(
+        modifier = Modifier.semantics { contentDescription = "Gender Input" }
+    ) {
         OutlinedTextField(
             value = selectedGender,
             onValueChange = {},
@@ -357,7 +370,9 @@ fun GenderInput(selectedGender: String, onGenderSelected: (String) -> Unit) {
 fun SubmitButton(onSubmit: () -> Unit) {
     Button(
         onClick = onSubmit,
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .semantics { contentDescription = "Submit Button" },
         colors = ButtonDefaults.buttonColors(
             containerColor = MaterialTheme.colorScheme.primary
         )
